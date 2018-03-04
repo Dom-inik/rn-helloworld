@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, TouchableHighlight } from 'react-native';
 import { Constants } from 'expo';
 
 // Define the input buttons that will be displayed in the calculator.
@@ -11,9 +11,11 @@ const inputButtons = [
 export class InputButton extends Component {
     render() {
         return (
-            <View style={Style.inputButton}>
+            <TouchableHighlight style={Style.inputButton}
+                        underlayColor="red"
+                        onPress={this.props.onPress}>
                 <Text style={Style.inputButtonText}>{this.props.value}</Text>
-            </View>
+            </TouchableHighlight>
         )
     }
 
@@ -42,7 +44,7 @@ export class Categories extends Component {
                 let input = row[i];
 
                 inputRow.push(
-                    <InputButton value={input} key={r + "-" + i} />
+                    <InputButton value={input} onPress={this._onInputButtonPressed.bind(this, input)} key={r + "-" + i}/>
                 );
             }
 
@@ -50,6 +52,10 @@ export class Categories extends Component {
         }
 
         return views;
+    }
+    
+    _onInputButtonPressed(input) {
+        alert(input)
     }
 }
 

@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, TouchableHighlight } from 'react-native';
 import { Constants } from 'expo';
 
 
 export class CancelButton extends Component {
     render() {
         return (
-            <View style={Style.cancelButton}>
+            <TouchableHighlight style={Style.cancelButton}
+                        underlayColor="red"
+                        onPress={this.props.onPress}>
                 <Text style={Style.inputButtonText}>{this.props.value}</Text>
-            </View>
+            </TouchableHighlight>
         )
     }
 }
@@ -16,9 +18,11 @@ export class CancelButton extends Component {
 export class SubmitButton extends Component {
     render() {
         return (
-            <View style={Style.submitButton}>
+            <TouchableHighlight style={Style.submitButton}
+                        underlayColor="green"
+                        onPress={this.props.onPress}>
                 <Text style={Style.inputButtonText}>{this.props.value}</Text>
-            </View>
+            </TouchableHighlight>
         )
     }
 }
@@ -28,11 +32,15 @@ export class Finisher extends Component {
         return (
             <View style={Style.rootContainer}>
                 <View style={Style.inputContainer}>
-                    <CancelButton value='cancel' key='cancel' />
-                    <SubmitButton value='submit' key='submit' />
+                    <CancelButton value='cancel' onPress={this._onInputButtonPressed.bind(this, 'cancel')} key='cancel' />
+                    <SubmitButton value='submit' onPress={this._onInputButtonPressed.bind(this, 'submit')} key='submit' />
                 </View>
             </View>
         );
+    }
+
+    _onInputButtonPressed(input) {
+        alert(input)
     }
 }
 
