@@ -7,13 +7,13 @@ const inputButtons = [
     [1, 2, 3, '/'],
     [4, 5, 6, '*'],
     [7, 8, 9, '-'],
-    [0, ',', '00', '%']
+    [0, ',', '=', '+']
 ];
 
 export class InputButton extends Component {
     render() {
         return (
-            <TouchableHighlight style={Style.inputButton}
+            <TouchableHighlight style={[Style.inputButton, this.props.highlight ? Style.inputButtonHighlighted : null]}
                         underlayColor="#193441"
                         onPress={this.props.onPress}>
                 <Text style={Style.inputButtonText}>{this.props.value}</Text>
@@ -24,10 +24,20 @@ export class InputButton extends Component {
 }
 
 export class Calculator extends Component {
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            inputValue: 0
+        }
+    }
+
     render() {
         return (
             <View style={Style.rootContainer}>
-                <View style={Style.displayContainer}></View>
+                <View style={Style.displayContainer}>
+                    <Text style={Style.displayText}>{this.state.inputValue}</Text>
+                </View>
                 <View style={Style.inputContainer}>{this._renderInputButtons()}</View>
             </View>
         );
@@ -57,7 +67,50 @@ export class Calculator extends Component {
     }
 
     _onInputButtonPressed(input) {
-        alert(input)
+        switch (typeof input) {
+            case 'number':
+                return this._handleNumberInput(input)
+            case 'string':
+                return this._handleStringInput(input)
+        }
+    }
+
+    _handleNumberInput(num) {
+        let inputValue = (this.state.inputValue * 10) + num;
+
+        this.setState({
+            inputValue: inputValue
+        })
+    }
+
+    _handleStringInput(str) {
+        switch (str) {
+            case '/':
+            case '*':
+            case '+':
+            case '-':
+                this.setState({
+                    selectedSymbol: str,
+                    previousInputValue: this.state.inputValue,
+                    inputValue: 0
+                });
+                break;
+                case '=':
+                let symbol = this.state.selectedSymbol,
+                    inputValue = this.state.inputValue,
+                    previousInputValue = this.state.previousInputValue;
+
+                if (!symbol) {
+                    return;
+                }
+
+                this.setState({
+                    previousInputValue: 0,
+                    inputValue: eval(previousInputValue + symbol + inputValue),
+                    selectedSymbol: null
+                });
+                break;
+        }
     }
 }
 
@@ -68,7 +121,16 @@ var Style = StyleSheet.create({
 
     displayContainer: {
         flex: 2,
-        backgroundColor: '#193441'
+        backgroundColor: '#193441',
+        justifyContent: 'center'
+    },
+
+    displayText: {
+        color: 'white',
+        fontSize: 38,
+        fontWeight: 'bold',
+        textAlign: 'right',
+        padding: 20
     },
 
     inputContainer: {
@@ -82,6 +144,10 @@ var Style = StyleSheet.create({
         justifyContent: 'center',
         borderWidth: 0.5,
         borderColor: '#91AA9D'
+    },
+
+    inputButtonHighlighted: {
+        backgroundColor: '#193441'
     },
 
     inputButtonText: {
